@@ -80,7 +80,7 @@ final class Controller: NSObject, NSApplicationDelegate {
     // MARK: actions
 
     func hasQuarantine(_ path: String) -> Bool {
-        run("/usr/bin/xattr", ["-p", "com.apple.quarantine", path], capture: true).status == 0
+        run("/usr/bin/xattr", ["-p", "com.apple.quarantine", path], capture: true) == 0
     }
 
     func clean(_ path: String) {
@@ -89,14 +89,14 @@ final class Controller: NSObject, NSApplicationDelegate {
     }
 
     @discardableResult
-    func run(_ launch: String, _ args: [String], capture: Bool = false) -> (status: Int32, _ unused: Bool) {
+    func run(_ launch: String, _ args: [String], capture: Bool = false) -> Int32 {
         let p = Process()
         p.executableURL = URL(fileURLWithPath: launch)
         p.arguments = args
         if capture { p.standardOutput = Pipe(); p.standardError = Pipe() }
-        do { try p.run() } catch { return (-1, false) }
+        do { try p.run() } catch { return -1 }
         p.waitUntilExit()
-        return (p.terminationStatus, false)
+        return p.terminationStatus
     }
 
     func flash(_ name: String) {
