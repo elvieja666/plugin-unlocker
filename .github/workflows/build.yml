@@ -1,0 +1,25 @@
+name: Build PluginUnlocker
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compilar la app
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Empaquetar la .app (conserva permisos)
+        run: ditto -c -k --keepParent PluginUnlocker.app PluginUnlocker.zip
+
+      - name: Subir el resultado
+        uses: actions/upload-artifact@v4
+        with:
+          name: PluginUnlocker
+          path: PluginUnlocker.zip
