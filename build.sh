@@ -9,8 +9,10 @@ OUT="$APP.app"
 rm -rf "$OUT"
 mkdir -p "$OUT/Contents/MacOS"
 
-echo "Compilando…"
-swiftc -O -framework AppKit -o "$OUT/Contents/MacOS/$APP" PluginUnlocker.swift
+echo "Compilando (binario universal arm64 + x86_64)…"
+swiftc -O -framework AppKit -target arm64-apple-macos11  -o "/tmp/$APP-arm64"  PluginUnlocker.swift
+swiftc -O -framework AppKit -target x86_64-apple-macos11 -o "/tmp/$APP-x86_64" PluginUnlocker.swift
+lipo -create -output "$OUT/Contents/MacOS/$APP" "/tmp/$APP-arm64" "/tmp/$APP-x86_64"
 
 cat > "$OUT/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
